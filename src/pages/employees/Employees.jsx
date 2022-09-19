@@ -6,43 +6,20 @@ import { BiHide, BiShow } from "react-icons/bi";
 import { EmployeesContainer, EmployeesWrapper } from "./employees.style";
 
 const Employees = () => {
-  const initialData = [
-    {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      jobRole: "",
-      department: "",
-      address: "",
-      gender: ""
-    }
-  ];
+  const initialData = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    jobRole: "",
+    department: "",
+    address: "",
+    gender: ""
+  };
 
   const [userData, setUserData] = useState(initialData);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
-  // eslint-disable-next-line
-  const [status, setStatus] = useState("");
-
-  const employeeSuccess = () => {
-    swal({
-      title: `Sucess`,
-      text: "User account successfully created",
-      icon: "success",
-      button: "Ok"
-    });
-  };
-
-  const employeeError = () => {
-    swal({
-      title: `Error`,
-      text: `${errorMessage}`,
-      icon: "warning",
-      button: "Ok"
-    });
-  };
 
   const handleChange = (e) => {
     const {
@@ -54,22 +31,30 @@ const Employees = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    const employee = JSON.stringify(userData);
+    const employee = userData;
     await axios
       .post("https://team-worker.herokuapp.com/api/v1/auth/create-user", employee)
-      .then((res) => {
-        setStatus(res?.status);
+      .then((response) => {
+        const status = response;
         setIsLoading(false);
+        swal({
+          title: `${status?.data?.status}`,
+          text: `${status?.data?.data?.message}`,
+          icon: "success",
+          button: "Ok"
+        });
       })
       .catch((error) => {
-        setErrorMessage(error?.response?.statusText);
+        const errorMessage = error;
         setIsLoading(false);
-      // eslint-disable-next-line
-      }); status === 200 ? employeeSuccess() 
-      : errorMessage ? employeeError()
-        : " ";
+        swal({
+          title: `${errorMessage?.response?.data?.status}`,
+          text: `${errorMessage?.response?.data?.error?.message}`,
+          icon: "warning",
+          button: "Ok"
+        });
+      });
   };
-  console.log(userData);
   return (
     <EmployeesContainer>
       <h1>Employees</h1>
@@ -132,13 +117,10 @@ const Employees = () => {
                 required
                 value={userData.password}
                 onChange={handleChange}
-                minLength={8}
-                // pattern='[a-zA-z0-9]{8}'
+                pattern="(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*_=+-]).{8,}"
                 placeholder="enter employee password"
-                title="password must contain lower case,
-                        uppercase, numbers and special characters"
+                title="password must be atleat 8 charcters, contain lower case, uppercase, numbers and special characters"
               />
-              {/* <br/> */}
               <div className="show">
                 {showPassword
                   ? <BiHide onClick={() => setShowPassword((prev) => !prev)} />
