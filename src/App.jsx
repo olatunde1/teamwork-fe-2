@@ -22,6 +22,7 @@ import LandingPage from "./pages/landing-page/LandingPage";
 import PersistLogin from "./auth/persistLogin/PersistLogin";
 import AlreadyLoggedIn from "./auth/alreadyLoggedIn/AlreadyLoggedIn";
 import RequireAuth from "./auth/requireAuth/RequireAuth";
+import Help from './Components/Help';
 
 const App = () => {
   const { setCurrentPage } = GeneralStore();
